@@ -1,5 +1,5 @@
 import { Action, ActionTypes, BoardState } from "../types";
-import { deleteCard, deleteTicket } from '../utils';
+import { deleteCard, deleteTicket, moveTicket } from '../utils';
 
 export const boardReducer = (state: BoardState, action: Action) => {
     switch (action.type) {
@@ -20,6 +20,9 @@ export const boardReducer = (state: BoardState, action: Action) => {
 
         case ActionTypes.DELETE_TICKET:
             return { ...state, ...deleteTicket(action.payload.id, action.payload.cardId) }
+
+        case ActionTypes.MOVE_TICKET:
+            return { ...state, cards: moveTicket(action.payload.ticketId, action.payload.fromCard, action.payload.toCard) }
 
         default:
             return { ...state };

@@ -90,3 +90,26 @@ const removeFromCard = (ticketId: string, cardId: string, cards: CardType[]) => 
 
     return cards;
 }
+
+// Moves the ticket from one card to another
+export const moveTicket = (ticketId: string, fromCardId: string, toCardId: string) => {
+    const cards: CardType[] = getCards();
+
+    cards.map((card) => {
+        if (fromCardId !== toCardId) {
+            if (card.id === fromCardId) {
+                card.ticket_ids = card.ticket_ids.filter((tId) => tId !== ticketId);
+            }
+
+            if (card.id === toCardId) {
+                card.ticket_ids.push(ticketId);
+            }
+        }
+
+        return card;
+    });
+
+    window.localStorage.setItem("cards", JSON.stringify(cards));
+
+    return cards;
+}

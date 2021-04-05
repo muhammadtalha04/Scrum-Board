@@ -1,4 +1,6 @@
 import React from 'react';
+import { useDrag } from 'react-dnd';
+import { DragItemTypes } from '../../types';
 import Icon from '../Icon/Icon';
 import Text from '../Text/Text';
 import { TicketBody, TicketHeader, TicketHeaderIcons, TicketWrapper } from './Style';
@@ -13,9 +15,17 @@ interface TicketProps {
 }
 
 const Ticket: React.FC<TicketProps> = ({ id, title, description, cardId, handleEdit, handleDelete }) => {
+    const [{ isDragging }, drag, dragPreview] = useDrag(() => ({
+        type: DragItemTypes.Ticket,
+        item: { ticketId: id, cardId: cardId },
+        collect: (monitor) => ({
+            isDragging: monitor.isDragging()
+        })
+    }));
+
     return (
-        <TicketWrapper>
-            <TicketHeader>
+        <TicketWrapper ref={dragPreview} isDragging={isDragging}>
+            <TicketHeader ref={drag}>
                 <Text text={title} />
 
                 <TicketHeaderIcons>

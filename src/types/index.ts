@@ -27,6 +27,7 @@ export const ActionTypes = {
     ADD_TICKET: "ADD_TICKET",
     EDIT_TICKET: "EDIT_TICKET",
     DELETE_TICKET: "DELETE_TICKET",
+    MOVE_TICKET: "MOVE_TICKET",
 };
 
 export type Align = "left" | "right" | "center";
@@ -37,3 +38,12 @@ export interface FormState {
 }
 
 export type Types = "create-card" | "create-ticket" | "edit-ticket";
+
+export const DragItemTypes = {
+    Ticket: "Ticket"
+};
+
+export interface DragData {
+    ticketId: string;
+    cardId: string;
+}
