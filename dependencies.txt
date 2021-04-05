@@ -1,0 +1,16 @@
+"@testing-library/jest-dom":        This testing library provides a set of custom jest matchers that we can use to extend jest. 
+"@testing-library/react":           This library is used for the testing of our React components.
+"@testing-library/user-event":      This library is used to simulate the real events that would happen in the browser as the user interacts with it like a mouse click.
+"@types/jest":          This package contains type definitions for jest.
+"@types/node":          This package contains type definitions for Node.js
+"@types/react":         This package contains type definitions for react.
+"@types/react-dom":     This package contains type definitions for react-dom.
+"@types/uuid": 	 Used this package to generate uuid
+"react":                Used this package for creating user interfaces. It is used with a react renderer like react-dom for web applications.
+"react-dnd": 		 This package provides the logic for drag and drop functionality.
+"react-dnd-html5-backend":	This package binds the logic provided by react-dnd package to the html5 api. 
+"react-dom":            This package serves as an entry point to the DOM and serves as a renderer for React. It is intended to be used with the react package.
+"react-scripts":        This package contains configurations and scripts that are used by Create React App.
+"styled-components":    Used this package for styling of components by using tagged template literals and css.
+"typescript":           It is a language which extends javascript by adding types to it. We are using typescript as the main language for the development of this application.
+"web-vitals":           This package provides functionality for measuring the web vitals. Web vitals help us indentify opportunities which can be improved for better user experience.
