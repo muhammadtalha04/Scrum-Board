@@ -3,10 +3,13 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { BoardProvider } from './contexts/BoardContext';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <BoardProvider>
+      <App />
+    </BoardProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );
