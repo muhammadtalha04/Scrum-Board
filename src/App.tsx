@@ -1,63 +1,33 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Board from './components/Board/Board';
 import Navbar from './components/Navbar/Navbar';
 import { useBoardContext } from './contexts/BoardContext';
-import { ActionTypes, CardType, TicketType } from './types';
+import { ActionTypes, CardType, FormActionTypes, TicketType } from './types';
 import { addTicket, getData } from './utils';
 import { v4 as uuid } from 'uuid';
 import Popup from './components/Popup/Popup';
 import { FormTypes, PopupTitles } from './constants';
+import { useFormContext } from './contexts/FormContext';
 
 const App: React.FC = () => {
   const { boardState, boardDispatch } = useBoardContext();
+  const { formState, formDispatch } = useFormContext();
 
+  // State hook to show/hide the popup on the screen
   const [showPopup, toggle] = useState(false);
-  const [popupTitle, setPopupTitle] = useState("");
-  const [type, setType] = useState("");
-  const [ticketIdState, setTicketId] = useState("");
-
-  const { cards: cardsList } = getData();
-
-  // States to be used for creating and editing cards and tickets
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [cardState, setCard] = useState("");
-
-  // References to be used for creating and editing cards and tickets
-  const titleRef = useRef<HTMLInputElement>(null);
-  const descRef = useRef<HTMLTextAreaElement>(null);
-  const cardRef = useRef<HTMLSelectElement>(null);
-  // -----------------------------------------------------------------
 
   // Form elements change handlers
-  const handleTitleChange = useCallback(() => {
-    if (titleRef.current !== null) {
-      setTitle(titleRef.current.value);
-    }
-  }, [titleRef]);
+  const handleTitleChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    formDispatch({ type: FormActionTypes.SET_TITLE, payload: { title: event.target.value } });
+  }, [formDispatch]);
 
-  const handleDescChange = useCallback(() => {
-    if (descRef.current !== null) {
-      setDescription(descRef.current.value);
-    }
-  }, [descRef]);
+  const handleDescChange = useCallback((event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    formDispatch({ type: FormActionTypes.SET_DESCRIPTION, payload: { description: event.target.value } });
+  }, [formDispatch]);
 
-  const handleCardChange = useCallback(() => {
-    if (cardRef.current !== null) {
-      setCard(cardRef.current.value);
-    }
-  }, [cardRef]);
-  // -----------------------------------------------------------------
-
-  // Resets the values of all the states being used in the form
-  const resetForm = useCallback(() => {
-    setPopupTitle("");
-    setType("");
-    setTitle("");
-    setDescription("");
-    setCard("");
-    setTicketId("");
-  }, []);
+  const handleCardChange = useCallback((event: React.ChangeEvent<HTMLSelectElement>) => {
+    formDispatch({ type: FormActionTypes.SET_CARD, payload: { card: event.target.value } });
+  }, [formDispatch]);
   // -----------------------------------------------------------------
 
   // To show or hide the popup window
@@ -66,46 +36,48 @@ const App: React.FC = () => {
   }, [showPopup]);
   // ------------------------------------------------------------------
 
-  // To show or hide the popup window
+  // To hide the popup window and to reset the form state
   const handleCancel = useCallback(() => {
-    resetForm();
+    formDispatch({ type: FormActionTypes.RESET_FORM });
     togglePopup();
-  }, [togglePopup, resetForm]);
+  }, [togglePopup, formDispatch]);
   // ------------------------------------------------------------------
 
   // Creates a new card and stores it in localStorage and state
   const saveCard = useCallback(() => {
+    // Creating a new card
     const card: CardType = {
       id: `${uuid()}`,
-      title: title,
+      title: formState.title,
       ticket_ids: []
     };
 
-    resetForm();    // To reset the form to its initial state
+    formDispatch({ type: FormActionTypes.RESET_FORM });       // To reset the form to its initial state
     togglePopup();
 
-    window.localStorage.setItem("cards", JSON.stringify([...boardState.cards, card]));
-    boardDispatch({ type: ActionTypes.ADD_CARD, payload: { card: card } });
-  }, [boardState.cards, title, boardDispatch, resetForm, togglePopup]);
+    window.localStorage.setItem("cards", JSON.stringify([...boardState.cards, card]));    // Storing the newly created card in the localStorage
+    boardDispatch({ type: ActionTypes.ADD_CARD, payload: { card: card } });               // Storing the newly created card in the boardState
+  }, [boardState.cards, formState.title, boardDispatch, formDispatch, togglePopup]);
   // -----------------------------------------------------------------
 
   // Creates a new card and stores it in localStorage and state
   const saveTicket = useCallback(() => {
+    // Creating a new ticket
     const ticket: TicketType = {
       id: `${uuid()}`,
-      title: title,
-      description: description
+      title: formState.title,
+      description: formState.description
     };
 
-    const updatedCards = addTicket(ticket.id, cardState, boardState.cards);
+    const updatedCards = addTicket(ticket.id, formState.card, boardState.cards);    // Adding the newly created ticket in its specific card
 
-    resetForm();    // To reset the form to its initial state
+    formDispatch({ type: FormActionTypes.RESET_FORM });         // To reset the form to its initial state
     togglePopup();
 
-    window.localStorage.setItem("cards", JSON.stringify(updatedCards));
-    window.localStorage.setItem("tickets", JSON.stringify([...boardState.tickets, ticket]));
-    boardDispatch({ type: ActionTypes.ADD_TICKET, payload: { ticket: ticket, cards: updatedCards } });
-  }, [boardState, title, description, cardState, boardDispatch, resetForm, togglePopup]);
+    window.localStorage.setItem("cards", JSON.stringify(updatedCards));       // Storing the updated cards into the localStorage
+    window.localStorage.setItem("tickets", JSON.stringify([...boardState.tickets, ticket]));    // Storing the newly created ticket in the localStorage
+    boardDispatch({ type: ActionTypes.ADD_TICKET, payload: { ticket: ticket, cards: updatedCards } });    // Storing the newly created ticket in the boardState
+  }, [boardState, formState, boardDispatch, formDispatch, togglePopup]);
   // -----------------------------------------------------------------
 
   // Creates a new card and stores it in localStorage and state
@@ -114,55 +86,55 @@ const App: React.FC = () => {
 
     updatedTickets.map((ticket) => {
       if (ticket.id === id) {
-        ticket.title = title;
-        ticket.description = description;
+        ticket.title = formState.title;
+        ticket.description = formState.description;
       }
 
       return ticket;
     });
 
-    resetForm();    // To reset the form to its initial state
+    formDispatch({ type: FormActionTypes.RESET_FORM });        // To reset the form to its initial state
     togglePopup();
 
     window.localStorage.setItem("tickets", JSON.stringify(updatedTickets));
     boardDispatch({ type: ActionTypes.EDIT_TICKET, payload: { tickets: updatedTickets } });
-  }, [boardState, title, description, boardDispatch, resetForm, togglePopup]);
+  }, [boardState, formState, boardDispatch, formDispatch, togglePopup]);
   // -----------------------------------------------------------------
 
   // Displays a popup window to enter the title of new card
   const handleAddNewCard = useCallback(() => {
-    setPopupTitle(PopupTitles.CreateCard);
-    setType(FormTypes.CreateCard);
-
+    formDispatch({ type: FormActionTypes.SET_DATA, payload: { popupTitle: PopupTitles.CreateCard, type: FormTypes.CreateCard } });
     togglePopup();
-  }, [togglePopup]);
+  }, [formDispatch, togglePopup]);
   // ------------------------------------------------------------------
 
   // Displays a popup window to create a new ticket
   const handleAddNewTicket = useCallback(() => {
-    setPopupTitle(PopupTitles.CreateTicket);
-    setType(FormTypes.CreateTicket);
-
+    formDispatch({ type: FormActionTypes.SET_DATA, payload: { popupTitle: PopupTitles.CreateTicket, type: FormTypes.CreateTicket } });
     togglePopup();
-  }, [togglePopup]);
+  }, [formDispatch, togglePopup]);
   // ------------------------------------------------------------------
 
   // Displays a popup window to create a new ticket
   const handleEditTicket = useCallback((id: string, cardId: string) => {
-    setPopupTitle(PopupTitles.EditTicket);
-    setType(FormTypes.EditTicket);
-    setTicketId(id);
-
     const ticket = boardState.tickets.filter((ticket) => {
       return ticket.id === id;
     })[0];
 
-    setTitle(ticket.title);
-    setDescription(ticket.description);
-    setCard(cardId);
+    formDispatch({
+      type: FormActionTypes.SET_DATA,
+      payload: {
+        popupTitle: PopupTitles.EditTicket,
+        type: FormTypes.EditTicket,
+        ticketId: id,
+        title: ticket.title,
+        description: ticket.description,
+        card: cardId,
+      }
+    });
 
     togglePopup();
-  }, [togglePopup, boardState.tickets]);
+  }, [togglePopup, formDispatch, boardState.tickets]);
   // ------------------------------------------------------------------
 
 
@@ -197,23 +169,13 @@ const App: React.FC = () => {
         showPopup &&
         (
           <Popup
-            heading={popupTitle}
-            type={type}
-            ticketId={ticketIdState}
-            title={title}
-            titleRef={titleRef}
             handleTitleChange={handleTitleChange}
-            description={description}
-            descRef={descRef}
             handleDescChange={handleDescChange}
-            card={cardState}
-            cardRef={cardRef}
             handleCardChange={handleCardChange}
             handleClose={handleCancel}
             handleCardSave={saveCard}
             handleTicketSave={saveTicket}
             handleTicketEdit={saveEditedTicket}
-            cardsList={cardsList}
           />
         )
       }

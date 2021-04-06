@@ -6,13 +6,16 @@ import reportWebVitals from './reportWebVitals';
 import { BoardProvider } from './contexts/BoardContext';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
+import { FormProvider } from './contexts/FormContext';
 
 ReactDOM.render(
   <React.StrictMode>
     <BoardProvider>
-      <DndProvider backend={HTML5Backend}>
-        <App />
-      </DndProvider>
+      <FormProvider>
+        <DndProvider backend={HTML5Backend}>
+          <App />
+        </DndProvider>
+      </FormProvider>
     </BoardProvider>
   </React.StrictMode>,
   document.getElementById('root')

@@ -3,13 +3,12 @@ import { InputElement } from './Style';
 
 interface InputProps {
     value: string;
-    reference: React.RefObject<HTMLInputElement>;
-    handleChange: React.ChangeEventHandler<HTMLInputElement>
+    handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const Input: React.FC<InputProps> = ({ value, reference, handleChange }) => {
+const Input: React.FC<InputProps> = ({ value, handleChange }) => {
     return (
-        <InputElement ref={reference} onChange={handleChange} value={value} />
+        <InputElement onChange={(e) => handleChange(e)} value={value} />
     );
 }
 

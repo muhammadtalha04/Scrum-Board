@@ -3,13 +3,12 @@ import { TextAreaElement } from './Style';
 
 interface TextAreaProps {
     value: string;
-    reference: React.RefObject<HTMLTextAreaElement>;
-    handleChange: React.ChangeEventHandler<HTMLTextAreaElement>
+    handleChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
 }
 
-const TextArea: React.FC<TextAreaProps> = ({ value, reference, handleChange }) => {
+const TextArea: React.FC<TextAreaProps> = ({ value, handleChange }) => {
     return (
-        <TextAreaElement value={value} ref={reference} onChange={handleChange} rows={3} />
+        <TextAreaElement value={value} onChange={(e) => handleChange(e)} rows={3} />
     );
 }
 

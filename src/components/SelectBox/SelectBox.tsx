@@ -4,14 +4,13 @@ import { Option, SelectElement } from './Style';
 
 interface SelectBoxProps {
     value: string;
-    reference: React.RefObject<HTMLSelectElement>;
-    handleChange: React.ChangeEventHandler<HTMLSelectElement>
+    handleChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
     cards: CardType[];
 }
 
-const SelectBox: React.FC<SelectBoxProps> = ({ value, reference, handleChange, cards }) => {
+const SelectBox: React.FC<SelectBoxProps> = ({ value, handleChange, cards }) => {
     return (
-        <SelectElement value={value} ref={reference} onChange={handleChange}>
+        <SelectElement value={value} onChange={handleChange}>
             {
                 cards.map((card) => <Option key={card.id} value={card.id}>{card.title}</Option>)
             }
