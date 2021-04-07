@@ -113,3 +113,55 @@ export const moveTicket = (ticketId: string, fromCardId: string, toCardId: strin
 
     return cards;
 }
+
+// Moves the card from one place to another
+export const moveCard = (fromCardId: string, toCardId: string) => {
+    const cards: CardType[] = getCards();
+
+    // Card which we are moving and the card from which the shift will start
+    const cardToMove: CardType = cards.filter((card) => card.id === fromCardId)[0];
+    const cardToMoveTo: CardType = cards.filter((card) => card.id === toCardId)[0];
+
+    // Indexes of cards in the cards array
+    const fromIndex: number = cards.indexOf(cardToMove);
+    const toIndex: number = cards.indexOf(cardToMoveTo);
+
+    // Removed the card we are moving and stored the reamining in a new variable
+    const remainingCards: CardType[] = cards.filter((card) => card.id !== fromCardId);
+
+    // To store the sorted cards
+    const newCards: CardType[] = [];
+
+    // Moving the card
+    remainingCards.forEach((card) => {
+        if (fromIndex < toIndex) {
+            newCards.push(card);
+        }
+        if (card.id === toCardId) {
+            newCards.push(cardToMove);
+        }
+        if (fromIndex > toIndex) {
+            newCards.push(card);
+        }
+    });
+
+    return newCards;
+}
+
+// Match the contents of the cards in locastorage and state
+export const matchCards = (localStorageCards: CardType[], boardStateCards: CardType[]) => {
+    let changed: boolean = false;
+
+    if (localStorageCards.length === boardStateCards.length) {
+        for (let i = 0; i < boardStateCards.length; i++) {
+            if (localStorageCards[i].id !== boardStateCards[i].id) {
+                changed = true;
+                break;
+            }
+        }
+    } else {
+        changed = true;
+    }
+
+    return changed;
+}

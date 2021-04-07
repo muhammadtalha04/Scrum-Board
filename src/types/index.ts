@@ -24,6 +24,7 @@ export const ActionTypes = {
     FETCH_DATA: "FETCH_DATA",
     ADD_CARD: "ADD_CARD",
     DELETE_CARD: "DELETE_CARD",
+    SET_CARDS: "SET_CARDS",
     ADD_TICKET: "ADD_TICKET",
     EDIT_TICKET: "EDIT_TICKET",
     DELETE_TICKET: "DELETE_TICKET",
@@ -55,10 +56,15 @@ export interface FormState {
 export type Types = "create-card" | "create-ticket" | "edit-ticket";
 
 export const DragItemTypes = {
-    Ticket: "Ticket"
+    Ticket: "Ticket",
+    Card: "Card",
 };
 
-export interface DragData {
+export interface TicketDragData {
     ticketId: string;
+    cardId: string;
+}
+
+export interface CardDragData {
     cardId: string;
 }

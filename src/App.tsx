@@ -3,7 +3,7 @@ import Board from './components/Board/Board';
 import Navbar from './components/Navbar/Navbar';
 import { useBoardContext } from './contexts/BoardContext';
 import { ActionTypes, CardType, FormActionTypes, TicketType } from './types';
-import { addTicket, getData } from './utils';
+import { addTicket, getData, matchCards } from './utils';
 import { v4 as uuid } from 'uuid';
 import Popup from './components/Popup/Popup';
 import { FormTypes, PopupTitles } from './constants';
@@ -157,7 +157,7 @@ const App: React.FC = () => {
     } else {
       const { cards, tickets } = getData();   // Get cards and tickets from the local storage
 
-      if (cards.length !== boardState.cards.length || tickets.length !== boardState.tickets.length) {
+      if (matchCards(cards, boardState.cards) || tickets.length !== boardState.tickets.length) {
         boardDispatch({ type: ActionTypes.FETCH_DATA, payload: { cards: cards, tickets: tickets } });
       }
     }
